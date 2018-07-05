@@ -8,46 +8,88 @@ class MaintainList extends React.Component{
         super(props);
         this.state = {
             items: [
-                {index: 1, name: 'This is done.', done: true},
-                {index: 2, name: 'This isn\'t done', done: false }
-            ]
+                {name: 'This is done.', done: true},
+                {name: 'This isn\'t done', done: false }
+            ],
+
         }   
+        this.addItem = this.addItem.bind(this);
+        this.delItem = this.delItem.bind(this);
+    }
+
+    addItem(task_name){
+        let new_items = this.state.items.slice();
+        new_items.unshift({name: task_name, done: false});
+        this.setState({items: new_items});
+    }
+
+    delItem(item_index){
+        let new_items = this.state.items.slice();
+        new_items.splice(item_index, 1);
+        this.setState({items: new_items});
     }
 
     render(){
         return (
-            <ShowTaskManager list={this.state.items} />
+            <div id="app">
+                <AddTask  add={this.addItem} />
+                <ShowTaskManager list={this.state.items} del={this.delItem} />
+            </div>
         );
     }
+}
+
+class AddTask extends React.Component{
+    constructor(props){
+        super(props);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+    handleSubmit(e){
+        e.preventDefault();
+        this.props.add(this.refs.itemName.value);
+        this.refs.itemName.value = '';
+    }
+    render(){
+        return (
+            <form className="row" onSubmit={this.handleSubmit}>
+                <input type="text" ref="itemName" className="col-11" />
+                <button type="submit" value="submit" className="btn btn-info col-1">+</button>
+            </form>
+        );
+    }
+}
+AddTask.propTypes = {
+    add: PropTypes.func
 }
 
 class ShowTaskManager extends React.Component{
     render(){
         let listSet = this.props.list.map(
             (item, index) => {
+                let workStatusClassName = this.done ? 'done': 'undone';
+                let workStatusIcon = this.done ? 'fa-circle-checked' : 'fa-circle';
                 return (
-                    <li className="list-group-item list-group-item-warning row" key={index}> 
-                        <span className="glyphicon glyphicon-unchecked col-md-1"></span>
+                    <li className="row" key={index}> 
+                        <i className="fa col-md-1" className={workStatusIcon}></i>
                         <span className="col-md-10">{item.name}</span>
-                        <span className="glyphicon glyphicon-remove col-md-1"></span>
+                        <i className="fa fa-trash-alt col-md-1" onClick={() => {this.props.del(index);}}></i>
                     </li>
                 )
             }
         )
         return (
-            <ul className="container list-group" id="todo-list">{listSet}</ul>
+            <ul>{listSet}</ul>
         );
     }
 }
 ShowTaskManager.propTypes = {
-    list: PropTypes.array //List will contain the list of tasks. Each task contains index, name and status if the task is done or not
+    list: PropTypes.array, //List will contain the list of tasks. Each task contains index, name and status if the task is done or not
+    del: PropTypes.func
 }
 
 const TodoApp = () => {
     return (
-        <div id="app">
-            <MaintainList />
-        </div>
+        <MaintainList />
     );
 }
 
