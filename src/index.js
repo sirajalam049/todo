@@ -1,40 +1,54 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import PropTypes from 'prop-types';
+import './index.css';
 
-// It has some properties:
-// 1. Index: It track each item.
-// 2. Name: It is the main content of the list.
-// 3. Done: It is the attribute that tells if the work is done
-var items = [];
-
-
-
-class TaskList extends React.Component{
+class MaintainList extends React.Component{
     constructor(props){
         super(props);
+        this.state = {
+            items: [
+                {index: 1, name: 'This is done.', done: true},
+                {index: 2, name: 'This isn\'t done', done: false }
+            ]
+        }   
     }
-}
 
-// It'll input the list item
-class TaskForm extends React.Component{
     render(){
         return (
-            <form onSubmit={}>
-                <input type="text" />
-                <button value="submit" />
-            </form>
+            <ShowTaskManager list={this.state.items} />
         );
     }
 }
 
-// It'll render everything
-const ToDoApp = () => {
+class ShowTaskManager extends React.Component{
+    render(){
+        let listSet = this.props.list.map(
+            (item, index) => {
+                return (
+                    <li className="list-group-item list-group-item-warning row" key={index}> 
+                        <span className="glyphicon glyphicon-unchecked col-md-1"></span>
+                        <span className="col-md-10">{item.name}</span>
+                        <span className="glyphicon glyphicon-remove col-md-1"></span>
+                    </li>
+                )
+            }
+        )
+        return (
+            <ul className="container list-group" id="todo-list">{listSet}</ul>
+        );
+    }
+}
+ShowTaskManager.propTypes = {
+    list: PropTypes.array //List will contain the list of tasks. Each task contains index, name and status if the task is done or not
+}
+
+const TodoApp = () => {
     return (
-        <div>
-            <TaskForm />
-            <TaskList />
+        <div id="app">
+            <MaintainList />
         </div>
     );
 }
 
-ReactDOM.render(<ToDoApp />, document.getElementById('root'));
+ReactDOM.render(<TodoApp />, document.getElementById('root'));
