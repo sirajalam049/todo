@@ -1,5 +1,20 @@
-
+#app{
+    width: 60%;
+    margin-top: 200px;
+}
+#todo-list{
+    padding: 0;
+}
 #todo-list li{
     font-size: 18px;
     font-family: 'Helvetica Neue';
+    list-style: none;
+}
+
+.done{
+    text-decoration: line-through;
+}
+
+.undone{
+    text-decoration: none;
 }
